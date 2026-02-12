@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='Media/logo.ico') }}">
+    <title>Registro de Usuario</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #003366; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .register-container { background-color: white; padding: 2.5rem; border-radius: 10px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2); width: 100%; max-width: 450px; }
+        h2 { text-align: center; margin-bottom: 2rem; color: #2D3748; font-size: 2rem; font-weight: 600; }
+        form { display: flex; flex-direction: column; gap: 1.5rem; }
+        .input-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        label { font-size: 0.95rem; color: #4A5568; font-weight: 500; }
+        input, select { padding: 14px 16px; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; }
+        input:focus, select:focus { outline: none; border-color: #ff6600; box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2); }
+        .user-type-selector { display: flex; gap: 15px; margin-top: 5px; }
+        .user-type-option { flex: 1; position: relative; }
+        .user-type-option input { position: absolute; opacity: 0; width: 0; height: 0; }
+        .user-type-label { display: block; padding: 12px 15px; border: 2px solid #E2E8F0; border-radius: 8px; text-align: center; cursor: pointer; background-color: #F7FAFC; transition: all 0.3s ease; }
+        .user-type-label:hover { border-color: #CBD5E0; }
+        .user-type-option input:checked + .user-type-label { border-color: #ff6600; background-color: rgba(255, 102, 0, 0.1); font-weight: 600; }
+        button { background-color: #ff6600; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1.05rem; font-weight: 600; cursor: pointer; margin-top: 1rem; transition: all 0.3s ease; }
+        button:hover { background-color: rgb(187, 76, 2); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 102, 0, 0.4); }
+        button:active { transform: translateY(0); }
+        .login-link { text-align: center; margin-top: 1.5rem; color: #4A5568; font-size: 0.95rem; }
+        .login-link a { color: #ff6600; text-decoration: none; font-weight: 600; transition: color 0.3s ease; }
+        .login-link a:hover { color: #e65c00; text-decoration: underline; }
+        @media (max-width: 480px) { 
+            .register-container { padding: 2rem 1.5rem; } 
+            h2 { font-size: 1.7rem; margin-bottom: 1.5rem; } 
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Registro</h2>
+
+        <form method="POST" action="{{ url_for('register') }}">
+            <div class="input-group">
+                <label for="username">Usuario:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+
+            <div class="input-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="input-group">
+                <label for="phone">Teléfono:</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <div class="input-group">
+                <label>Tipo de Usuario:</label>
+                <div class="user-type-selector">
+                    <div class="user-type-option">
+                        <input type="radio" id="user_type_client" name="user_type" value="client" checked>
+                        <label class="user-type-label" for="user_type_client">Cliente</label>
+                    </div>
+                    <div class="user-type-option">
+                        <input type="radio" id="user_type_admin" name="user_type" value="admin">
+                        <label class="user-type-label" for="user_type_admin">Administrador</label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit">Registrarse</button>
+        </form>
+
+        <p class="login-link">
+            ¿Ya tienes una cuenta? <a href="{{ url_for('login') }}">Inicia sesión aquí</a>
+        </p>
+    </div>
+</body>
+</html>

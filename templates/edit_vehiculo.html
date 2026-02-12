@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Vehículo - C&C</title>
+    <link rel="icon" href="{{ url_for('static', filename='Media/logo.ico') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #004e92 0%, #003366 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .edit-header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .edit-header h1 {
+            color: #004e92;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .form-section {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-title {
+            color: #004e92;
+            font-size: 24px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            color: #495057;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #f8f9fa;
+            color: #495057;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #ff6600;
+            box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+            background: white;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            background-color: #ff6600;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background-color: #e65c00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 102, 0, 0.4);
+        }
+
+        small {
+            color: #6c757d;
+            font-size: 12px;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .current-image {
+            max-width: 300px;
+            border-radius: 8px;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .flash.danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-section {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="edit-header">
+            <h1>✏️ Editar Vehículo</h1>
+            <p>Modifica los datos del vehículo: <strong>{{ vehiculo.nombre }}</strong></p>
+            <a href="{{ url_for('admin_panel') }}" class="back-btn">← Volver al Panel</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages">
+              {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="form-section">
+            <h2 class="section-title">Información del Vehículo</h2>
+            <form method="POST" action="{{ url_for('edit_vehiculo', id=vehiculo.id) }}" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label class="form-label">Nombre del Vehículo *</label>
+                    <input type="text" name="nombre" class="form-control" value="{{ vehiculo.nombre }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Categoría *</label>
+                    <select name="categoria" class="form-control" required>
+                        <option value="economico" {% if vehiculo.categoria == 'economico' %}selected{% endif %}>Económico</option>
+                        <option value="compacto" {% if vehiculo.categoria == 'compacto' %}selected{% endif %}>Compacto</option>
+                        <option value="familiar" {% if vehiculo.categoria == 'familiar' %}selected{% endif %}>Familiar</option>
+                        <option value="premium" {% if vehiculo.categoria == 'premium' %}selected{% endif %}>Premium</option>
+                        <option value="Deportivo" {% if vehiculo.categoria == 'Deportivo' %}selected{% endif %}>Deportivo</option>
+                        <option value="XL" {% if vehiculo.categoria == 'XL' %}selected{% endif %}>XL (Pasajeros)</option>
+                        <option value="XL" {% if vehiculo.categoria == 'Carga' %}selected{% endif %}>Carga</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Capacidad Personas *</label>
+                        <input type="number" name="capacidad_personas" class="form-control" 
+                               value="{{ vehiculo.capacidad_personas }}" min="1" max="20" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Capacidad Maletas *</label>
+                        <input type="number" name="capacidad_maletas" class="form-control" 
+                               value="{{ vehiculo.capacidad_maletas }}" min="0" max="10" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Transmisión *</label>
+                    <select name="transmision" class="form-control" required>
+                        <option value="Manual" {% if vehiculo.transmision == 'Manual' %}selected{% endif %}>Manual</option>
+                        <option value="Automático" {% if vehiculo.transmision == 'Automático' %}selected{% endif %}>Automático</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="aire_acondicionado" id="ac" value="1" 
+                               {% if vehiculo.aire_acondicionado %}checked{% endif %}>
+                        <label for="ac" class="form-label" style="margin: 0;">Aire Acondicionado</label>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Precio (COP) *</label>
+                        <input type="number" name="precio" class="form-control" 
+                               value="{{ vehiculo.precio }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Descuento SOAT</label>
+                        <input type="text" name="descuento_soat" class="form-control" 
+                               value="{{ vehiculo.descuento_soat if vehiculo.descuento_soat else '' }}" 
+                               placeholder="-20% SOAT">
+                        <small>Opcional. Ej: -15% SOAT</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Descripción *</label>
+                    <textarea name="descripcion" class="form-control" required>{{ vehiculo.descripcion }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Cambiar Imagen</label>
+                    <input type="file" name="imagen" class="form-control" accept="image/*">
+                    <small>Dejar vacío para mantener la imagen actual. Formatos: JPG, PNG, WEBP</small>
+                    {% if vehiculo.imagen %}
+                    <div style="margin-top: 15px;">
+                        <strong>Imagen actual:</strong><br>
+                        <img src="{{ url_for('static', filename=vehiculo.imagen) }}" alt="{{ vehiculo.nombre }}" class="current-image">
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="destacado" id="destacado" value="1" 
+                               {% if vehiculo.destacado %}checked{% endif %}>
+                        <label for="destacado" class="form-label" style="margin: 0;">⭐ Marcar como Destacado</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">💾 Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

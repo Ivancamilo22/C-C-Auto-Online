@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es" {% if session.get('dark_mode') %}class="dark-mode"{% endif %}>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Usuario - C&C</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dark-mode.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='Media/logo.ico') }}">
+    <style>
+        .logo-icon { 
+            border-radius: 10px; 
+        }
+        
+        .pdf-container {
+            width: 100%;
+            height: calc(100vh - 150px);
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px var(--shadow);
+        }
+        
+        .pdf-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .page-banner {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            padding: 60px 0;
+            text-align: center;
+            color: white;
+        }
+        
+        .page-banner h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .page-banner p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+        }
+        
+        .guide-content {
+            padding: 40px 0;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            background-color: var(--btn-primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            background-color: var(--btn-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 102, 0, 0.3);
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ff6600;
+            margin-right: 8px;
+        }
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background-color: var(--bg-card);
+            border-radius: 5px;
+            box-shadow: 0 5px 15px var(--shadow);
+            z-index: 1000;
+            min-width: 180px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .user-menu:hover .user-dropdown,
+        .user-dropdown:hover {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+        }
+        .user-menu:hover .user-dropdown {
+            transition-delay: 0.15s;
+        }
+        .dropdown-item {
+            display: block;
+            padding: 10px 15px;
+            color: #2d3748;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .dark-mode .dropdown-item {
+            color: var(--text-primary);
+        }
+        .dropdown-item:hover {
+            background-color: var(--border-color);
+        }
+        .dropdown-item.logout {
+            color: #dc3545;
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='Media/fondo.jpg') }}" alt="Logo" class="logo-icon" width="50px">
+                <a>C&C - Online Auto</a>
+            </div>
+            <nav class="navigation">
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                    <li><a href="{{ url_for('index') }}#servicios">Servicios</a></li>
+                    <li><a href="{{ url_for('flota') }}">Vehículos</a></li>
+                    <li><a href="{{ url_for('index') }}#contacto">Contacto</a></li>
+                    <li><a href="{{ url_for('guia_usuario') }}" class="active">Manual de Usuario</a></li>
+                    {% if session.get('username') %}
+                    <li>
+                        <div class="user-menu">
+                            <img src="{{ url_for('static', filename=profile_image if profile_image else 'uploads/default_avatar.png') }}" alt="Foto de perfil" class="user-avatar">
+                            <span><a href="{{ url_for('dashboard') }}">{{ session['username'] }}</a></span>
+                            <div class="user-dropdown">
+                                <a href="{{ url_for('dashboard') }}" class="dropdown-item">Mi Panel</a>
+                                <a href="{{ url_for('logout') }}" class="dropdown-item logout">Cerrar Sesión</a>
+                            </div>
+                        </div>
+                    </li>
+                    {% else %}
+                    <li><a href="{{ url_for('login') }}">Ingresar</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="page-banner">
+        <div class="container">
+            <h1>Manual de Usuario</h1>
+            <p>Aprende a usar todas las funcionalidades de nuestra plataforma</p>
+            <a href="{{ url_for('static', filename='Media/Guiadeusuario.pdf') }}" download class="download-btn">📥 Descargar PDF</a>
+        </div>
+    </section>
+
+    <section class="guide-content">
+        <div class="container">
+            <div class="pdf-container">
+                <iframe src="{{ url_for('static', filename='Media/Guiadeusuario.pdf') }}" type="application/pdf"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contacto">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-column">
+                    <h3>C&C - Online Auto</h3>
+                    <p>La mejor opción en venta de vehículos. Calidad y confianza desde 2025.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Contáctanos</h3>
+                    <ul>
+                        <li>📱 +57 302 4649720</li>
+                        <li>✉️ ivancarrascocano@gmail.com</li>
+                        <li>🏢 Av. Guayacanes #78-89</li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Enlaces rápidos</h3>
+                    <ul>
+                        <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                        <li><a href="{{ url_for('index') }}#servicios">Servicios</a></li>
+                        <li><a href="{{ url_for('flota') }}">Flota</a></li>
+                        <li><a href="{{ url_for('guia_usuario') }}">Guía de Usuario</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Horario de atención</h3>
+                    <ul>
+                        <li>Lunes a Viernes: 8:00 - 20:00</li>
+                        <li>Sábados: 9:00 - 18:00</li>
+                        <li>Domingos: 10:00 - 14:00</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 C&C Online Auto. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

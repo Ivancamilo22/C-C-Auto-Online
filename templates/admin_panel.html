@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="es" {% if session.get('dark_mode') %}class="dark-mode"{% endif %}>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - C&C</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dark-mode.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='Media/logo.ico') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 24px var(--shadow);
+        }
+
+        .admin-header h1 {
+            color: #004e92;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .admin-header p {
+            color: #32363a;
+            font-size: 16px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        /* Pestañas de navegación */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px var(--shadow);
+        }
+
+        .tab-btn {
+            padding: 12px 30px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-page);
+            color: #32363a;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            border-color: #ff6600;
+        }
+
+        .tab-btn.active {
+            background: #ff6600;
+            color: white;
+            border-color: #ff6600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .admin-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .form-section {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px var(--shadow);
+        }
+
+        .section-title {
+            color: #004e92;
+            font-size: 24px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: #32363a;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--bg-page);
+            color: #32363a;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #ff6600;
+            box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 8px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .radio-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            background-color: #ff6600;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background-color: #e65c00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 102, 0, 0.4);
+        }
+
+        .list-section {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px var(--shadow);
+            max-height: 800px;
+            overflow-y: auto;
+        }
+
+        .item-card {
+            background: var(--bg-page);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .item-card:hover {
+            border-color: #ff6600;
+            transform: translateX(5px);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .item-nombre {
+            color: #004e92;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .item-badge {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-categoria {
+            background-color: #ff6600;
+            color: white;
+        }
+
+        .badge-admin {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .badge-client {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .item-info {
+            color: #32363a;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .item-precio {
+            color: #ff6600;
+            font-weight: 700;
+            font-size: 18px;
+            margin-top: 8px;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+            margin-right: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .edit-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 6px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+            margin-right: 8px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .pdf-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .pdf-btn:hover {
+            background: linear-gradient(135deg, #218838, #1aa179);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(40, 167, 69, 0.5);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .destacado-badge {
+            background-color: #ffc107;
+            color: #000;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: 500;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .flash.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .flash.danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .dark-mode .flash.success {
+            background-color: #1e4620;
+            color: #7eda85;
+            border-color: #2d5f30;
+        }
+
+        .dark-mode .flash.danger {
+            background-color: #4a1f23;
+            color: #f8b3ba;
+            border-color: #5d2d32;
+        }
+
+        small {
+            color: #32363a;
+            font-size: 12px;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px var(--shadow);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #ff6600;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #32363a;
+            font-size: 14px;
+        }
+
+        @media (max-width: 1024px) {
+            .admin-content {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="admin-header">
+            <h1>🔧 Panel de Administración</h1>
+            <p>Gestiona el catálogo de vehículos y usuarios de C&C Online Auto</p>
+            <a href="{{ url_for('dashboard') }}" class="back-btn">Volver al Dashboard</a>
+        </div>
+
+        <!-- Mensajes flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages">
+              {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <!-- Estadísticas -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ vehiculos|length }}</div>
+                <div class="stat-label">🚗 Vehículos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ usuarios|length }}</div>
+                <div class="stat-label">👥 Usuarios</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ admins_count }}</div>
+                <div class="stat-label">👨‍💼 Administradores</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ clients_count }}</div>
+                <div class="stat-label">👤 Clientes</div>
+            </div>
+        </div>
+        
+        <!-- Pestañas -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('vehiculos')">🚗 Gestión de Vehículos</button>
+            <button class="tab-btn" onclick="switchTab('usuarios')">👥 Gestión de Usuarios</button>
+        </div>
+
+        <!-- Contenido: Vehículos -->
+        <div id="tab-vehiculos" class="tab-content active">
+            <div class="admin-content">
+                <!-- Formulario para agregar vehículo -->
+                <div class="form-section">
+                    <h2 class="section-title">➕ Agregar Nuevo Vehículo</h2>
+                    <form method="POST" action="{{ url_for('admin_panel') }}" enctype="multipart/form-data">
+                        <input type="hidden" name="form_type" value="vehiculo">
+                        
+                        <div class="form-group">
+                            <label class="form-label">Nombre del Vehículo *</label>
+                            <input type="text" name="nombre" class="form-control" placeholder="Ej: Toyota Corolla 2024" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Categoría *</label>
+                            <select name="categoria" class="form-control" required>
+                                <option value="">Selecciona una categoría</option>
+                                <option value="economico">Económico</option>
+                                <option value="compacto">Compacto</option>
+                                <option value="familiar">Familiar</option>
+                                <option value="premium">Premium</option>
+                                <option value="Deportivo">Deportivo</option>
+                                <option value="XL">XL (Pasajeros)</option>
+                                <option value="Carga">Carga</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Capacidad Personas *</label>
+                                <input type="number" name="capacidad_personas" class="form-control" min="1" max="20" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Capacidad Maletas *</label>
+                                <input type="number" name="capacidad_maletas" class="form-control" min="0" max="10" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Transmisión *</label>
+                            <select name="transmision" class="form-control" required>
+                                <option value="">Selecciona tipo</option>
+                                <option value="Manual">Manual</option>
+                                <option value="Automático">Automático</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="aire_acondicionado" id="ac" value="1" checked>
+                                <label for="ac" class="form-label" style="margin: 0;">Aire Acondicionado</label>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Precio (COP) *</label>
+                                <input type="number" name="precio" class="form-control" placeholder="85000000" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Descuento SOAT</label>
+                                <input type="text" name="descuento_soat" class="form-control" placeholder="-20% SOAT">
+                                <small>Opcional. Ej: -15% SOAT</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Descripción *</label>
+                            <textarea name="descripcion" class="form-control" placeholder="Descripción detallada del vehículo..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Imagen del Vehículo *</label>
+                            <input type="file" name="imagen" class="form-control" accept="image/*" required>
+                            <small>Formatos: JPG, PNG, WEBP. La imagen se guardará en static/Media/</small>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="destacado" id="destacado" value="1">
+                                <label for="destacado" class="form-label" style="margin: 0;">⭐ Marcar como Destacado</label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn">✅ Agregar Vehículo</button>
+                    </form>
+                </div>
+
+                <!-- Lista de vehículos existentes -->
+                <div class="list-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 class="section-title" style="margin-bottom: 0;">🚗 Vehículos Actuales ({{ vehiculos|length }})</h2>
+                        <a href="{{ url_for('generar_pdf_vehiculos') }}" class="pdf-btn">📄 Generar PDF</a>
+                    </div>
+                    {% for vehiculo in vehiculos %}
+                    <div class="item-card">
+                        <div class="item-header">
+                            <span class="item-nombre">
+                                {{ vehiculo.nombre }}
+                                {% if vehiculo.destacado %}
+                                <span class="destacado-badge">DESTACADO</span>
+                                {% endif %}
+                            </span>
+                            <span class="item-badge badge-categoria">{{ vehiculo.categoria }}</span>
+                        </div>
+                        <div class="item-info">
+                            👥 {{ vehiculo.capacidad_personas }} personas | 
+                            🧳 {{ vehiculo.capacidad_maletas }} maletas | 
+                            ⚙️ {{ vehiculo.transmision }}
+                            {% if vehiculo.aire_acondicionado %}| ❄️ A/C{% endif %}
+                        </div>
+                        <div class="item-precio">${{ "{:,.0f}".format(vehiculo.precio) }}</div>
+                        <div class="action-buttons">
+                            <a href="{{ url_for('edit_vehiculo', id=vehiculo.id) }}" class="edit-btn">✏️ Editar</a>
+                            <form method="POST" action="{{ url_for('delete_vehiculo', id=vehiculo.id) }}" style="display: inline;" onsubmit="return confirm('¿Estás seguro de eliminar este vehículo?');">
+                                <button type="submit" class="delete-btn">🗑️ Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido: Usuarios -->
+        <div id="tab-usuarios" class="tab-content">
+            <div class="admin-content">
+                <!-- Formulario para agregar usuario -->
+                <div class="form-section">
+                    <h2 class="section-title">➕ Agregar Nuevo Usuario</h2>
+                    <form method="POST" action="{{ url_for('admin_panel') }}">
+                        <input type="hidden" name="form_type" value="usuario">
+                        
+                        <div class="form-group">
+                            <label class="form-label">Nombre de Usuario *</label>
+                            <input type="text" name="username" class="form-control" placeholder="usuario123" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email *</label>
+                            <input type="email" name="email" class="form-control" placeholder="usuario@ejemplo.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Teléfono *</label>
+                            <input type="tel" name="phone" class="form-control" placeholder="+57 300 1234567" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Contraseña *</label>
+                            <input type="password" name="password" class="form-control" placeholder="Mínimo 6 caracteres" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Tipo de Usuario *</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" name="user_type" id="type_client" value="client" checked>
+                                    <label for="type_client" class="form-label" style="margin: 0;">👤 Cliente</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" name="user_type" id="type_admin" value="admin">
+                                    <label for="type_admin" class="form-label" style="margin: 0;">👨‍💼 Administrador</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn">✅ Agregar Usuario</button>
+                    </form>
+                </div>
+
+                <!-- Lista de usuarios existentes -->
+                <div class="list-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 class="section-title" style="margin-bottom: 0;">👥 Usuarios Registrados ({{ usuarios|length }})</h2>
+                        <a href="{{ url_for('generar_pdf_usuarios') }}" class="pdf-btn">📄 Generar PDF</a>
+                    </div>
+                    {% for usuario in usuarios %}
+                    <div class="item-card">
+                        <div class="item-header">
+                            <span class="item-nombre">{{ usuario.username }}</span>
+                            <span class="item-badge {% if usuario.user_type == 'admin' %}badge-admin{% else %}badge-client{% endif %}">
+                                {% if usuario.user_type == 'admin' %}👨‍💼 Administrador{% else %}👤 Cliente{% endif %}
+                            </span>
+                        </div>
+                        <div class="item-info">
+                            📧 {{ usuario.email }}<br>
+                            📱 {{ usuario.phone }}<br>
+                            📅 Registrado: {{ usuario.created_at.strftime('%d/%m/%Y') }}
+                        </div>
+                        <div class="action-buttons">
+                            <a href="{{ url_for('edit_usuario', id=usuario.id) }}" class="edit-btn">✏️ Editar</a>
+                            {% if usuario.username != session['username'] %}
+                            <form method="POST" action="{{ url_for('delete_usuario', id=usuario.id) }}" style="display: inline;" onsubmit="return confirm('¿Estás seguro de eliminar este usuario?');">
+                                <button type="submit" class="delete-btn">🗑️ Eliminar</button>
+                            </form>
+                            {% else %}
+                            <small style="color: #ffc107; font-weight: 600;">⚠️ No puedes eliminar tu propia cuenta</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Ocultar todos los contenidos
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Desactivar todos los botones
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Activar el contenido seleccionado
+            document.getElementById('tab-' + tabName).classList.add('active');
+            
+            // Activar el botón seleccionado
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
