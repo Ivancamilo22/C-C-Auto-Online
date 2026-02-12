@@ -1,178 +1,235 @@
-# 🚗 Proyecto Web - Sistema de Visualización de Flota de Vehículos
+# 🚗 Autos Ruta Capital - Sistema Web de Gestión y Alquiler de Vehículos
 
 ## 📌 Descripción del Proyecto
 
-Este proyecto es una aplicación web estática desarrollada con **HTML, CSS y JavaScript puro**, cuyo propósito es mostrar una flota de vehículos de manera interactiva y organizada.
+Autos Ruta Capital es una aplicación web desarrollada con **Python (Flask), HTML, CSS y JavaScript**, que permite la gestión y visualización de una flota de vehículos para alquiler.
 
-El sistema permite:
+El sistema incluye:
 
-- Visualizar vehículos disponibles
-- Filtrar vehículos por categoría
-- Mostrar imágenes dinámicas mediante un carrusel automático
-- Navegar entre secciones del sitio
+- Visualización pública de vehículos
+- Sistema de registro e inicio de sesión
+- Panel administrativo
+- Gestión de vehículos
+- Gestión de usuarios
+- Base de datos relacional
+- Sistema de autenticación
 
-Es una solución pensada para empresas de alquiler de autos, concesionarios o catálogos digitales de vehículos.
-
----
-
-## 🎯 Objetivo
-
-Proporcionar una interfaz clara y dinámica para que los usuarios puedan:
-
-- Explorar diferentes tipos de vehículos
-- Filtrar por categorías específicas
-- Visualizar imágenes destacadas automáticamente
-
-Sin necesidad de backend ni base de datos.
+Esta versión ya no es solo frontend. Es una aplicación web completa con backend y base de datos.
 
 ---
 
 ## 🛠️ Tecnologías Utilizadas
 
-- **HTML5** → Estructura del sitio
-- **CSS3** → Diseño y estilos visuales
-- **JavaScript (Vanilla JS)** → Interactividad y comportamiento dinámico
+### Backend
+- Python 3
+- Flask
+- SQL (Base de datos relacional)
 
-No se utilizan frameworks ni librerías externas.
+### Frontend
+- HTML5
+- CSS3
+- JavaScript
+
+### Base de Datos
+- Archivo `concesionario.sql`
 
 ---
 
 ## 📂 Estructura del Proyecto
 
 ```
-/proyecto
+PROYECTO/
 │
-├── index.html
-├── flota.html
+├── app.py
+├── concesionario.sql
+├── requirements.txt
+├── readme.md
 │
-├── styles.css
-├── flota-styles.css
+├── static/
+│   ├── Media/
+│   ├── uploads/
+│   ├── carrusel.js
+│   ├── filtro.js
+│   ├── styles.css
+│   ├── flota-styles.css
+│   ├── dark-mode.css
 │
-├── carrusel.js
-├── filtro.js
-│
-└── README.md
+├── templates/
+│   ├── index.html
+│   ├── flota.html
+│   ├── login.html
+│   ├── register.html
+│   ├── registro_exitoso.html
+│   ├── dashboard.html
+│   ├── admin_panel.html
+│   ├── edit_usuario.html
+│   ├── edit_vehiculo.html
+│   ├── guia_usuario.html
+│   ├── construction.html
 ```
 
 ---
 
-## 🔎 Funcionamiento del Proyecto
+## 🔐 Funcionalidades del Sistema
 
-### 1️⃣ Página Principal (`index.html`)
+### 👤 Usuarios
 
-Contiene:
+- Registro de usuario
+- Inicio de sesión
+- Edición de perfil
+- Gestión desde panel administrativo
 
-- Sección principal con imágenes destacadas
-- Carrusel automático de imágenes
-- Navegación hacia la sección de flota
+### 🚘 Vehículos
 
-El carrusel funciona mediante `carrusel.js`.
+- Visualización de flota
+- Filtrado por categorías
+- Gestión de vehículos (admin)
+- Edición de vehículos
 
----
+### 🛠️ Administración
 
-### 2️⃣ Sistema de Carrusel (`carrusel.js`)
-
-Este archivo:
-
-- Espera a que el DOM cargue completamente
-- Selecciona las imágenes dentro del contenedor `.slider-container`
-- Alterna la clase `active` cada 5 segundos
-- Crea un efecto de rotación automática
-
-Lógica principal:
-
-- Se guarda el índice actual
-- Se elimina la clase `active`
-- Se calcula la siguiente imagen
-- Se activa la nueva imagen
-
-El cambio ocurre cada **5000 ms (5 segundos)** usando `setInterval`.
+- Panel de control
+- Gestión de usuarios
+- Gestión de vehículos
+- Sistema de autenticación
 
 ---
 
-### 3️⃣ Página de Flota (`flota.html`)
+## 🧠 Cómo Funciona el Sistema
 
-Contiene:
+### 1️⃣ Backend (`app.py`)
 
-- Tarjetas de vehículos (`.car-card`)
-- Botones de categoría (`.category-btn`)
-- Atributos `data-category` para clasificar vehículos
+El archivo `app.py` contiene:
 
----
+- Configuración de Flask
+- Rutas del sistema
+- Conexión con la base de datos
+- Lógica de autenticación
+- Gestión de sesiones
+- CRUD de usuarios y vehículos
 
-### 4️⃣ Sistema de Filtro (`filtro.js`)
-
-Este archivo permite:
-
-- Filtrar vehículos según la categoría seleccionada
-- Activar visualmente el botón seleccionado
-- Mostrar u ocultar tarjetas dinámicamente
-
-Funcionamiento:
-
-1. Detecta clic en un botón
-2. Obtiene el valor `data-category`
-3. Recorre todas las tarjetas
-4. Muestra solo las que coinciden
-5. Si la categoría es `all`, muestra todas
-
-No recarga la página.
-No requiere servidor.
+Flask renderiza las vistas ubicadas en la carpeta `templates`.
 
 ---
 
-## 🎨 Estilos
+### 2️⃣ Carpeta `templates/`
 
-- `styles.css` → Estilos generales del sitio
-- `flota-styles.css` → Estilos específicos de la sección de flota
+Contiene las vistas HTML renderizadas por Flask.
 
-Incluyen:
+Cada archivo corresponde a una ruta del sistema:
 
-- Diseño responsivo
-- Efectos visuales
-- Estados activos
-- Organización visual de tarjetas
+- `index.html` → Página principal
+- `login.html` → Inicio de sesión
+- `register.html` → Registro
+- `dashboard.html` → Panel de usuario
+- `admin_panel.html` → Panel administrador
+- etc.
+
+---
+
+### 3️⃣ Carpeta `static/`
+
+Contiene los recursos estáticos:
+
+- Archivos CSS
+- Archivos JavaScript
+- Imágenes
+- Archivos subidos por usuarios
+
+Flask los sirve automáticamente.
+
+---
+
+### 4️⃣ Base de Datos
+
+El archivo `concesionario.sql` contiene:
+
+- Estructura de tablas
+- Relaciones
+- Datos iniciales (si aplica)
+
+Se utiliza para almacenar:
+
+- Usuarios
+- Vehículos
+- Información del sistema
 
 ---
 
 ## 🚀 Cómo Ejecutar el Proyecto
 
-1. Descargar o clonar el repositorio
-2. Abrir el archivo `index.html` en cualquier navegador moderno
+### 1️⃣ Clonar el repositorio
 
-No se necesita:
+```
+git clone <URL_DEL_REPOSITORIO>
+```
 
-- Servidor
-- Base de datos
-- Instalación de dependencias
+### 2️⃣ Crear entorno virtual
 
-Es 100% frontend.
+```
+python -m venv venv
+```
+
+### 3️⃣ Activar entorno virtual
+
+Windows:
+```
+venv\Scripts\activate
+```
+
+Mac/Linux:
+```
+source venv/bin/activate
+```
+
+### 4️⃣ Instalar dependencias
+
+```
+pip install -r requirements.txt
+```
+
+### 5️⃣ Configurar la base de datos
+
+- Crear base de datos
+- Importar el archivo `concesionario.sql`
+
+### 6️⃣ Ejecutar la aplicación
+
+```
+python app.py
+```
+
+Luego abrir en el navegador:
+
+```
+http://127.0.0.1:5000
+```
 
 ---
 
-## 📌 Características Técnicas Implementadas
+## 📌 Características Técnicas
 
-- Manipulación del DOM
-- Uso de `data-attributes`
-- Uso de `classList`
-- Eventos `addEventListener`
-- Uso de `setInterval`
-- Separación de responsabilidades (HTML / CSS / JS)
+- Arquitectura MVC (Flask + Templates)
+- CRUD completo
+- Autenticación de usuarios
+- Manejo de sesiones
+- Separación backend / frontend
+- Gestión de archivos subidos
+- Estructura escalable
 
 ---
 
 ## 🔮 Posibles Mejoras Futuras
 
-- Integración con backend y base de datos
-- Sistema de reservas en línea
-- Panel administrativo
-- Búsqueda avanzada
-- Paginación de resultados
-- Animaciones más avanzadas
-- Implementación con framework moderno (React / Vue)
+- Sistema de reservas en tiempo real
+- Integración con pasarela de pagos
+- API REST
+- Autenticación con JWT
+- Roles y permisos más avanzados
+- Despliegue en servidor cloud
 
 ---
 
-## 👨‍💻 Autor: Ivan Camilo Carrasco Cano Marzo 2025
+## 👨‍💻 Autor: Ivan Carrasco: Octubre 2025
 
-Proyecto desarrollado como práctica de desarrollo web frontend.
+Proyecto académico desarrollado como aplicación web completa utilizando Flask.
