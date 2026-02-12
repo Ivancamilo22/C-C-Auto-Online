@@ -2,7 +2,7 @@
 
 ## 📌 Descripción del Proyecto
 
-Autos Ruta Capital es una aplicación web desarrollada con **Python (Flask), HTML, CSS y JavaScript**, que permite la gestión y visualización de una flota de vehículos para alquiler.
+C&C Auto Online es una aplicación web desarrollada con **Python (Flask), HTML, CSS y JavaScript**, que permite la gestión y visualización de una flota de vehículos para alquiler.
 
 El sistema incluye:
 
